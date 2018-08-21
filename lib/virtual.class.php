@@ -48,7 +48,7 @@ class Virtual extends VacationDriver {
         //   print_r($vacArr);
         $fwdArr = $this->virtual_alias();
 
-        $sql = sprintf("SELECT subject,body,active FROM %s.vacation WHERE email='%s'",
+        $sql = sprintf("SELECT subject,body,active,activefrom,activeuntil FROM %s.vacation WHERE email='%s'",
                 $this->cfg['dbase'], rcube::Q($this->user->data['username']));
 
 		
@@ -65,6 +65,8 @@ class Virtual extends VacationDriver {
             $vacArr['subject'] = $row['subject'];
             //$vacArr['enabled'] = ($row['active'] == 1) && ($fwdArr['enabled'] == 1);
             $vacArr['enabled'] = ($row['active'] == 1);
+            $vacArr['activefrom'] = $row['activefrom'];
+            $vacArr['activeuntil'] = $row['activeuntil'];
         }
 
 
@@ -84,12 +86,13 @@ class Virtual extends VacationDriver {
         // Sets class property
         $this->domain_id = $this->domainLookup();
 
-        $sql = sprintf("UPDATE %s.vacation SET created=now(),active=0 WHERE email='%s'", $this->cfg['dbase'], rcube::Q($this->user->data['username']));
+        $sql = sprintf("UPDATE %s.vacation SET modified=now() WHERE email='%s'", $this->cfg['dbase'], rcube::Q($this->user->data['username']));
+ //       $sql = sprintf("select email from %s.vacation WHERE email='%s'", $this->cfg['dbase'], rcube::Q($this->user->data['username']));
 
 
         $this->db->query($sql);
 
-        $update = ($this->db->affected_rows() == 1);
+	$update = ($this->db->affected_rows() == 1);
 
         // Delete the alias for the vacation transport (Postfix)
         $sql = $this->translate($this->cfg['delete_query']);
@@ -108,22 +111,31 @@ class Virtual extends VacationDriver {
 
 
         // Save vacation message in any case
-
-        if (!$update) {
+             if (!$update) {
             $sql = "INSERT INTO {$this->cfg['dbase']}.vacation ".
-                "( email, subject, body, cache, domain, created, active, startDate, endDate ) ".
-                "VALUES ( ?, ?, ?, '', ?, NOW(), ?, NULL, NULL )";
-        } else {
-            $sql = "UPDATE {$this->cfg['dbase']}.vacation SET email=?,subject=?,body=?,domain=?,active=?, startDate=NULL, endDate=NULL WHERE email=?";
-        }
+                "( email, subject, body, domain, created, active, activefrom, activeuntil, cache ) ".
+                "VALUES ( ?, ?, ?, ?, NOW(), ?, ?, ?, '' )";
+            $this->db->query($sql,
+            rcube::Q($this->user->data['username']),
+            $this->subject,
+            $this->body,
+            $this->domain,
+            $this->enable,
+            $this->activefrom,
+            $this->activeuntil,
+            rcube::Q($this->user->data['username']));
+	} else {
+            $sql = "UPDATE {$this->cfg['dbase']}.vacation SET email=?,subject=?,body=?,active=?,activefrom=?,activeuntil=?,modified=now() WHERE email=?";
 
         $this->db->query($sql, 
 	    rcube::Q($this->user->data['username']), 
 	    $this->subject, 
 	    $this->body, 
-	    $this->domain,
 	    $this->enable,
+	    $this->activefrom,
+	    $this->activeuntil,
 	    rcube::Q($this->user->data['username']));
+        }
         if ($error = $this->db->is_error()) {
             if (strpos($error, "no such field")) {
                 $error = " Configure either domain_lookup_query or use \%d in config.ini's insert_query rather than \%i<br/><br/>";

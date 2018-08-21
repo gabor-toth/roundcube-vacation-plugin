@@ -123,6 +123,22 @@ class vacation extends rcube_plugin {
                 rcube_utils::rep_specialchars_output($this->gettext('autoreply')),
                 $input_autoresponderactive->show($settings['enabled']));
 
+	//Starts from
+	$field_id = 'vacation_activefrom';
+        $input_autoresponderactivefrom = new html_inputfield(array('name' => '_vacation_activefrom', 'id' => $field_id, 'size' => 16));
+        $out .= sprintf("<tr><td class=\"title\"><label for=\"%s\">%s</label></td><td>%s</td></tr>\n",
+                $field_id,
+                rcube_utils::rep_specialchars_output($this->gettext('autoreplyactivefrom')),
+                $input_autoresponderactivefrom->show($settings['activefrom']));
+
+	//Ends at
+	$field_id = 'vacation_activeuntil';
+        $input_autoresponderactiveuntil = new html_inputfield(array('name' => '_vacation_activeuntil', 'id' => $field_id, 'size' => 16));
+        $out .= sprintf("<tr><td class=\"title\"><label for=\"%s\">%s</label></td><td>%s</td></tr>\n",
+                $field_id,
+                rcube_utils::rep_specialchars_output($this->gettext('autoreplyactiveuntil')),
+                $input_autoresponderactiveuntil->show($settings['activeuntil']));
+
         // Subject
         $field_id = 'vacation_subject';
         $input_autorespondersubject = new html_inputfield(array('name' => '_vacation_subject', 'id' => $field_id, 'size' => 90));
@@ -177,7 +193,7 @@ class vacation extends rcube_plugin {
         // Information on the forward in a seperate fieldset.
         if (! isset($this->inicfg['disable_forward']) || ( isset($this->inicfg['disable_forward']) && $this->inicfg['disable_forward']==false))
         {
-            $out .= '<tr><td>' . $this->gettext('separate_forward') . '</td></tr>';
+//            $out .= '<tr><td>' . $this->gettext('separate_forward') . '</td></tr>';
 
             // Forward mail to another account
             $field_id = 'vacation_forward';
