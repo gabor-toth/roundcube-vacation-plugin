@@ -123,26 +123,91 @@ class vacation extends rcube_plugin {
                 rcube_utils::rep_specialchars_output($this->gettext('autoreply')),
                 $input_autoresponderactive->show($settings['enabled']));
 
-	//Starts from
-	$field_id = 'vacation_activefrom';
-        $input_autoresponderactivefrom = new html_inputfield(array('name' => '_vacation_activefrom', 'id' => $field_id, 'size' => 16));
-        $out .= sprintf("<tr><td class=\"title\"><label for=\"%s\">%s</label></td><td>%s</td></tr>\n",
-                $field_id,
+	//Dates management
+	$field_id = 'vacation_active_dates';
+	$field_from_id = 'vacation_activefrom';
+	$field_until_id = 'vacation_activeuntil';
+        $input_autoresponderactivefrom = new html_inputfield(array('name' => '_vacation_active_dates', 'id' => $field_id, 'size' => 90));
+        $out .= sprintf('<meta charset="utf-8"><meta name="viewport" content="width=20, initial-scale=1">
+  <title>jQuery UI Datepicker - Default functionality</title>
+  <link rel=\"stylesheet\" href=\"https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet\" href=\"https://jqueryui.com/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$.datepicker.setDefaults(
+    {
+        altField: "#datepicker",
+        closeText: "Fermer",
+        prevText: "Précédent",
+        nextText: "Suivant",
+        currentText: "Aujourd\'hui",
+        monthNames: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+        monthNamesShort: ["Janv.", "Févr.", "Mars", "Avril", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."],
+        dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+        dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
+        dayNamesMin: ["D", "L", "M", "M", "J", "V", "S"],
+        weekHeader: "Sem.",
+	firstDay: 1,
+        dateFormat: "yy-mm-dd",
+	showWeek: true
+    }
+);
+</script>
+<script>
+  $( function() {
+    queryDate = "%s";
+    var parsedDate = $.datepicker.parseDate("yy-mm-dd", queryDate);
+      from = $( "#from" )
+        .datepicker({
+          changeMonth: true,
+          numberOfMonths: 1,
+	  beforeShowDay: $.datepicker.noWeekends
+        }).datepicker("setDate", parsedDate)
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+	queryDate = "%s";
+	var parsedDate = $.datepicker.parseDate("yy-mm-dd", queryDate);
+      to = $( "#to" ).datepicker({
+        changeMonth: true,
+        numberOfMonths: 1
+      }).datepicker("setDate", parsedDate)
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+ 
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+ 
+      return date;
+    }
+  } );
+</script>
+<tr><td class="title">
+<label for="%s">%s</label></td>
+<td><input type="text" id="from" name="_vacation_activefrom">
+</td></tr>
+<tr><td class="title">
+<label for="%s">%s</label></td>
+<td><input type="text" id="to" name="_vacation_activeuntil">
+</td></tr>',
+		$settings['activefrom'],
+		$settings['activeuntil'],
+                $field_from_id,
                 rcube_utils::rep_specialchars_output($this->gettext('autoreplyactivefrom')),
-                $input_autoresponderactivefrom->show($settings['activefrom']));
-
-	//Ends at
-	$field_id = 'vacation_activeuntil';
-        $input_autoresponderactiveuntil = new html_inputfield(array('name' => '_vacation_activeuntil', 'id' => $field_id, 'size' => 16));
-        $out .= sprintf("<tr><td class=\"title\"><label for=\"%s\">%s</label></td><td>%s</td></tr>\n",
-                $field_id,
-                rcube_utils::rep_specialchars_output($this->gettext('autoreplyactiveuntil')),
-                $input_autoresponderactiveuntil->show($settings['activeuntil']));
+		$field_until_id,
+		rcube_utils::rep_specialchars_output($this->gettext('autoreplyactiveuntil')));
 
         // Subject
         $field_id = 'vacation_subject';
         $input_autorespondersubject = new html_inputfield(array('name' => '_vacation_subject', 'id' => $field_id, 'size' => 90));
-        $out .= sprintf("<tr><td class=\"title\"><label for=\"%s\">%s</label></td><td>%s</td></tr>\n",
+        $out .= sprintf('<tr><td class="title"><label for="%s">%s</label></td><td>%s</td></tr>',
                 $field_id,
                 rcube_utils::rep_specialchars_output($this->gettext('autoreplysubject')),
                 $input_autorespondersubject->show($settings['subject']));

@@ -65,8 +65,8 @@ class Virtual extends VacationDriver {
             $vacArr['subject'] = $row['subject'];
             //$vacArr['enabled'] = ($row['active'] == 1) && ($fwdArr['enabled'] == 1);
             $vacArr['enabled'] = ($row['active'] == 1);
-            $vacArr['activefrom'] = $row['activefrom'];
-            $vacArr['activeuntil'] = $row['activeuntil'];
+            $vacArr['activefrom'] = explode(' ',$row['activefrom'])[0];
+            $vacArr['activeuntil'] =explode(' ', $row['activeuntil'])[0];
         }
 
 

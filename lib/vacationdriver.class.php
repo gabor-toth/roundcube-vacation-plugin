@@ -115,8 +115,8 @@ public function loadDefaults() {
 	 */
 	final public function save() {
 		$this->enable = (NULL != rcube_utils::get_input_value('_vacation_enabled', rcube_utils::INPUT_POST));
-		$this->activefrom = (rcube_utils::get_input_value('_vacation_activefrom', rcube_utils::INPUT_POST));
-		$this->activeuntil = (rcube_utils::get_input_value('_vacation_activeuntil', rcube_utils::INPUT_POST));
+		$this->activefrom = (rcube_utils::get_input_value('_vacation_activefrom', rcube_utils::INPUT_POST)) . " 00:00:00";
+		$this->activeuntil = (rcube_utils::get_input_value('_vacation_activeuntil', rcube_utils::INPUT_POST)) . " 23:59:59";
 		$this->subject = rcube_utils::get_input_value('_vacation_subject', rcube_utils::INPUT_POST);
 		$this->body = rcube_utils::get_input_value('_vacation_body', rcube_utils::INPUT_POST);
 		$this->keepcopy = (NULL != rcube_utils::get_input_value('_vacation_keepcopy', rcube_utils::INPUT_POST));
