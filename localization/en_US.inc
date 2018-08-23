@@ -15,6 +15,9 @@ $labels['separate_alias'] = 'Separate each alias address by a comma';
 $labels['separate_forward'] = 'Separate each forward address by a comma';
 $labels['success_changed'] = 'Vacation settings succesfully changed';
 $labels['vacation'] = 'Vacation';
+$labels['autoreplyactivefrom'] = 'Active from';
+$labels['autoreplyactiveuntil'] = 'Active until';
+
 // Button text
 $labels['aliasesbutton'] = 'Get aliases';
 ?>
